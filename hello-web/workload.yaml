@@ -1,0 +1,11 @@
+apiVersion: openchoreo.dev/v1alpha1
+metadata:
+  name: hello-web
+
+endpoints:
+  - name: http
+    type: HTTP
+    port: 3000
+    basePath: /
+    visibility:
+      - external

@@ -1,0 +1,25 @@
+{
+  "overview": "A minimal single-page web application serving a static 'Hello World' message. The architecture consists of a single frontend component that delivers HTML content directly to browser clients without requiring backend services or APIs.",
+  "requirements": [
+    "Display 'Hello World' text when a visitor accesses the application URL",
+    "Serve content via standard HTTP/HTTPS protocol accessible through web browsers",
+    "Support rendering in Chrome, Firefox, and Safari browsers",
+    "Deliver page content with minimal load time (under 2 seconds)",
+    "Provide a health check endpoint for Kubernetes liveness/readiness probes",
+    "Serve static content without external service dependencies"
+  ],
+  "components": [
+    {
+      "name": "hello-web",
+      "componentType": "web-app",
+      "language": "TypeScript / React",
+      "dependsOn": [],
+      "entrypoint": "deployment/web-application",
+      "buildpack": "docker",
+      "appPath": "/hello-web",
+      "openAPISpec": "openapi: 3.0.3\ninfo:\n  title: Hello World Web Application\n  version: 1.0.0\n  description: Simple web application serving a Hello World page\npaths:\n  /health:\n    get:\n      summary: Health check endpoint\n      description: Returns service health status for Kubernetes probes\n      operationId: getHealth\n      responses:\n        '200':\n          description: Service is healthy\n          content:\n            application/json:\n              schema:\n                type: object\n                properties:\n                  status:\n                    type: string\n                    example: ok\n                  timestamp:\n                    type: string\n                    format: date-time\n                    example: '2024-01-15T10:30:00Z'\n  /:\n    get:\n      summary: Serve Hello World page\n      description: Returns the main HTML page displaying Hello World\n      operationId: getHomePage\n      responses:\n        '200':\n          description: HTML page with Hello World message\n          content:\n            text/html:\n              schema:\n                type: string\n                example: '\u003c!DOCTYPE html\u003e\u003chtml\u003e\u003cbody\u003e\u003ch1\u003eHello World\u003c/h1\u003e\u003c/body\u003e\u003c/html\u003e'",
+      "componentAgentInstructions": "Implement a React-based single-page application using TypeScript and Create React App or Vite. Configuration: Use Node.js 18+ with npm or yarn. Set up a production-optimized build pipeline. Create a simple React component that renders 'Hello World' as the main heading (h1 tag). Style the text centered on the page with a clean, modern font. Include a /health endpoint served by a lightweight Express.js server (port 3000) that returns JSON {status: 'ok', timestamp: ISO8601}. The Express server should serve the React build artifacts as static files from the /build or /dist directory. Implement proper error boundaries in React to handle rendering failures gracefully. Configure Dockerfile: use node:18-alpine as base, copy package files, run npm ci, copy source, build React app, expose port 3000, and start Express server. Ensure the application responds within 500ms for both the homepage and health endpoint. Add meta tags for proper viewport scaling on mobile devices. Test compatibility indicators for Chrome 90+, Firefox 88+, and Safari 14+. Set appropriate cache headers for static assets (1 year) and HTML (no-cache). The Express server health endpoint should respond before React loads to ensure Kubernetes probes work during startup. Include basic error logging to stdout. No authentication, database, or external API calls required. Build should produce production-optimized bundles with code splitting and minification enabled."
+    }
+  ],
+  "sourceSpec": "spec-v1"
+}
